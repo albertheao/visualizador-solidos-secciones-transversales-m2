@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sólidos con secciones transversales conocidas</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script>MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--navy:#12324a;--blue:#0b6380;--strong-blue:#0057b8;--gold:#d6a52a;--gold-dark:#8a6500;--cream:#fff8e5;--ice:#edf4f6;--ink:#173042;--muted:#526b79;--line:#d7e2e7;--turquoise:#008c95;--orange:#e06b16;--violet:#7357b8;--red:#b42318}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;min-height:100%}body{padding:30px 18px 60px;background:linear-gradient(180deg,var(--navy) 0 8px,var(--ice) 8px 100%);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1080px;margin:auto}.institution{margin:0 0 8px;color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}h1{margin:0 0 8px;padding-left:16px;border-left:5px solid var(--gold);font-size:clamp(24px,4vw,34px);line-height:1.15}.intro{max-width:890px;margin:0;color:var(--muted);line-height:1.58}.card{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(18,50,74,.07)}h2{margin:0 0 12px;color:var(--navy);font-size:1.12rem}h3{margin:0;color:var(--blue);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}.controls{display:grid;grid-template-columns:minmax(250px,1.4fr) minmax(220px,1fr);gap:18px}.control-stack{display:grid;gap:15px}.field label,.range-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:7px;color:var(--navy);font-size:.92rem;font-weight:750}.value-chip{display:inline-flex;min-width:70px;justify-content:center;padding:4px 9px;border-radius:999px;background:var(--cream);color:var(--gold-dark);font-variant-numeric:tabular-nums;font-weight:800}.field select{width:100%;padding:10px 12px;border:1px solid #bcced6;border-radius:8px;background:#fff;color:var(--ink)}input[type="range"]{width:100%;accent-color:var(--blue)}button,input,select{font:inherit}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(214,165,42,.42);outline-offset:2px}.check-row{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:650}.check-row input{width:18px;height:18px;accent-color:var(--blue)}.example-note{height:100%;padding:16px;border:1px solid #cfe0e6;border-radius:12px;background:linear-gradient(145deg,#f8fcfd,#edf6f8)}.example-note p{margin:7px 0 0;color:var(--muted);line-height:1.55}.example-note .data{margin-top:12px;padding-top:11px;border-top:1px solid #cfdee4;color:var(--ink);font-size:.92rem}.plots{display:grid;grid-template-columns:1fr 1.18fr;gap:14px}.plot-card{min-width:0;padding:0;overflow:hidden}.plot-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px 8px}.plot-title h2{margin:0}.plot-title span{color:var(--muted);font-size:.8rem}.plot{width:100%;height:440px}.legend{display:flex;flex-wrap:wrap;gap:13px 18px;margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#f8fbfc;font-size:.86rem}.legend-item{display:flex;align-items:center;gap:7px}.swatch{width:18px;height:8px;border-radius:999px}.swatch.region{background:rgba(0,140,149,.45);border:1px solid var(--turquoise)}.swatch.section{background:var(--gold)}.swatch.stack{background:var(--violet)}.results{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.result{padding:15px;border:1px solid var(--line);border-radius:11px;background:#fbfdfe}.result p{margin:8px 0 0;min-height:44px;color:var(--ink);line-height:1.5}.result.volume{border-color:#ead491;background:var(--cream)}.result.volume p{color:var(--gold-dark);font-size:1.18rem;font-weight:850}.tip{margin:14px 0 0;color:var(--muted);font-size:.9rem;line-height:1.55}.status{min-height:22px;margin-top:10px;color:var(--red);font-weight:700}footer{margin-top:22px;padding-top:16px;border-top:1px solid #cbd9df;color:var(--muted);font-size:12px;line-height:1.7;text-align:center}
+@media(max-width:850px){.plots,.results{grid-template-columns:1fr}.plot{height:400px}}@media(max-width:640px){body{padding:25px 10px 45px}.card{padding:14px}.controls{grid-template-columns:1fr}.plot{height:370px}.plot-title{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+<p class="institution">Universidad Galileo · Departamento de Matemática Aplicada</p>
+<h1>Sólidos con secciones transversales conocidas</h1>
+<p class="intro">Explora cómo una familia de figuras planas construye un sólido. Selecciona un ejemplo, desplaza la sección resaltada y relaciona su dimensión característica con el área (A(x)).</p>
+</header>
+
+<section class="card controls" aria-label="Controles del applet">
+<div class="control-stack">
+<div class="field">
+<label for="example-select">Ejemplo</label>
+<select id="example-select">
+<option value="circle-triangle">Base circular y triángulos equiláteros</option>
+<option value="pyramid">Gran Pirámide de Guiza</option>
+<option value="triangle-square">Base triangular y secciones cuadradas</option>
+</select>
+</div>
+<div class="field">
+<div class="range-head"><label for="position-slider">Posición de la sección</label><span class="value-chip" id="position-value">x = 0</span></div>
+<input id="position-slider" type="range" min="-1" max="1" step="0.01" value="0" aria-describedby="position-help">
+<div id="position-help" class="tip">Mueve el control para observar cómo cambia la sección transversal.</div>
+</div>
+<label class="check-row"><input id="show-stack" type="checkbox"> Mostrar varias secciones simultáneamente</label>
+<div class="field" id="count-control" hidden>
+<div class="range-head"><label for="count-slider">Cantidad de secciones</label><span class="value-chip" id="count-value">10</span></div>
+<input id="count-slider" type="range" min="4" max="24" step="1" value="10">
+</div>
+</div>
+<aside class="example-note" aria-live="polite">
+<h2 id="example-title">Base circular y triángulos equiláteros</h2>
+<p id="example-description"></p>
+<p class="data" id="example-data"></p>
+</aside>
+</section>
+
+<section class="plots" aria-label="Visualizaciones sincronizadas">
+<article class="card plot-card">
+<div class="plot-title"><h2 id="plot2d-title">Región base</h2><span>Vista 2D</span></div>
+<div id="plot2d" class="plot" role="img" aria-label="Región plana y segmento que determina la sección transversal"></div>
+</article>
+<article class="card plot-card">
+<div class="plot-title"><h2>Sólido formado por las secciones</h2><span>Vista 3D interactiva</span></div>
+<div id="plot3d" class="plot" role="img" aria-label="Sólido tridimensional con una sección transversal resaltada"></div>
+</article>
+</section>
+
+<div class="legend" aria-label="Leyenda de colores">
+<div class="legend-item"><span class="swatch region"></span>Región o sólido</div>
+<div class="legend-item"><span class="swatch section"></span>Sección seleccionada</div>
+<div class="legend-item" id="stack-legend" hidden><span class="swatch stack"></span>Secciones adicionales</div>
+</div>
+
+<section class="card" aria-label="Relaciones matemáticas">
+<h2>Relaciones matemáticas</h2>
+<div class="results">
+<div class="result"><h3>Dimensión característica</h3><p id="width-formula"></p></div>
+<div class="result"><h3>Área de la sección</h3><p id="area-formula"></p></div>
+<div class="result volume"><h3>Volumen aproximado</h3><p id="volume-result"></p></div>
+</div>
+<p class="tip">En todos los casos, el volumen se obtiene acumulando las áreas de las secciones: \(V=\int_a^b A(x)\,dx\).</p>
+<div id="status" class="status" role="alert" aria-live="assertive"></div>
+</section>
+
+<footer><strong>Departamento de Matemática Aplicada</strong> · Universidad Galileo</footer>
+</main>
+
+<script>
+(()=>{'use strict';
+const COLORS={navy:'#12324a',blue:'#0057b8',gold:'#d6a52a',turquoise:'#008c95',violet:'#7357b8',grid:'rgba(82,107,121,.24)',ink:'#173042',muted:'#526b79'};
+const exampleSelect=document.getElementById('example-select');
+const positionSlider=document.getElementById('position-slider');
+const positionValue=document.getElementById('position-value');
+const showStack=document.getElementById('show-stack');
+const countControl=document.getElementById('count-control');
+const countSlider=document.getElementById('count-slider');
+const countValue=document.getElementById('count-value');
+const stackLegend=document.getElementById('stack-legend');
+const exampleTitle=document.getElementById('example-title');
+const exampleDescription=document.getElementById('example-description');
+const exampleData=document.getElementById('example-data');
+const plot2dTitle=document.getElementById('plot2d-title');
+const widthFormula=document.getElementById('width-formula');
+const areaFormula=document.getElementById('area-formula');
+const volumeResult=document.getElementById('volume-result');
+const status=document.getElementById('status');
+const plot2d=document.getElementById('plot2d');
+const plot3d=document.getElementById('plot3d');
+const linspace=(a,b,n)=>Array.from({length:n},(_,i)=>a+(b-a)*i/(n-1));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const formatNumber=(value,digits=3)=>Math.abs(value)<1e-12?'0':Number(value.toFixed(digits)).toLocaleString('es-GT',{maximumFractionDigits:digits});
+
+const examples={
+  'circle-triangle':{
+    title:'Base circular y triángulos equiláteros',description:'La base es el círculo unitario. Cada corte perpendicular al eje x produce un triángulo equilátero cuyo lado es la cuerda vertical del círculo.',data:'Intervalo: −1 ≤ x ≤ 1 · Radio de la base: 1',plotTitle:'Región base circular',a:-1,b:1,step:.01,unit:'u',symbol:'x',section:'equilateral',centered:true,
+    lower:x=>-Math.sqrt(Math.max(0,1-x*x)),upper:x=>Math.sqrt(Math.max(0,1-x*x)),side:x=>2*Math.sqrt(Math.max(0,1-x*x)),segmentLabel:'2y',segmentValue:x=>2*Math.sqrt(Math.max(0,1-x*x)),
+    widthLatex:'\\(y(x)=\\sqrt{1-x^2}\\)',areaLatex:'\\(A(x)=\\frac{\\sqrt{3}}{4}[2y(x)]^2=\\sqrt{3}(1-x^2)\\)',volume:4*Math.sqrt(3)/3,volumeUnit:'u³',xTitle:'x',yTitle:'y'
+  },
+  pyramid:{
+    title:'Gran Pirámide de Guiza',description:'El vértice se coloca en el origen. Los cortes perpendiculares al eje x son cuadrados cuyo lado es 2y(x), donde y(x) crece linealmente hasta 378 ft.',data:'Vértice: (0,0) · Punto de la recta: (481,378) · Lado de la base: 756 ft',plotTitle:'Recta que determina la mitad del lado',a:0,b:481,step:1,unit:'ft',symbol:'x',section:'square-centered',centered:true,
+    lower:x=>-378*x/481,upper:x=>378*x/481,side:x=>756*x/481,segmentLabel:'y',segmentValue:x=>378*x/481,annotationY:x=>189*x/481,
+    widthLatex:'\\(y(x)=\\frac{378}{481}x\\text{ ft}\\)',areaLatex:'\\(A(x)=[2y(x)]^2\\)',volume:756*756*481/3,volumeUnit:'ft³',xTitle:'x (ft)',yTitle:'y(x) (ft)'
+  },
+  'triangle-square':{
+    title:'Base triangular y secciones cuadradas',description:'La base está limitada por los ejes coordenados y la recta x+y=1. Cada segmento vertical de la región es el lado de un cuadrado.',data:'Vértices de la base: (0,0), (1,0) y (0,1) · Intervalo: 0 ≤ x ≤ 1',plotTitle:'Región base triangular',a:0,b:1,step:.01,unit:'u',symbol:'x',section:'square-positive',centered:false,
+    lower:x=>0,upper:x=>Math.max(0,1-x),side:x=>Math.max(0,1-x),segmentLabel:'y',segmentValue:x=>Math.max(0,1-x),
+    widthLatex:'\\(y(x)=1-x\\)',areaLatex:'\\(A(x)=y(x)^2=(1-x)^2\\)',volume:1/3,volumeUnit:'u³',xTitle:'x',yTitle:'y'
+  }
+};
+
+function currentExample(){return examples[exampleSelect.value]}
+function sectionVertices(example,t){
+  const s=example.side(t);
+  if(example.section==='equilateral')return [[-s/2,0],[s/2,0],[0,Math.sqrt(3)*s/2]];
+  if(example.section==='square-centered')return [[-s/2,-s/2],[s/2,-s/2],[s/2,s/2],[-s/2,s/2]];
+  return [[0,0],[s,0],[s,s],[0,s]];
+}
+function sectionMeshTrace(example,t,color=COLORS.gold,opacity=.92,name='Sección seleccionada'){
+  const vertices=sectionVertices(example,t),x=vertices.map(()=>t),y=vertices.map(v=>v[0]),z=vertices.map(v=>v[1]);
+  const i=[],j=[],k=[];
+  for(let q=1;q<vertices.length-1;q++){i.push(0);j.push(q);k.push(q+1)}
+  return {type:'mesh3d',x,y,z,i,j,k,color,opacity,flatshading:true,hovertemplate:`${example.symbol}=${formatNumber(t,2)} ${example.unit}<extra></extra>`,name,showlegend:false};
+}
+function sectionOutlineTrace(example,t,color=COLORS.gold,width=7){
+  const v=sectionVertices(example,t),closed=[...v,v[0]];
+  return {type:'scatter3d',mode:'lines',x:closed.map(()=>t),y:closed.map(p=>p[0]),z:closed.map(p=>p[1]),line:{color,width},hoverinfo:'skip',showlegend:false};
+}
+function solidMesh(example){
+  const ts=linspace(example.a,example.b,91),ringSize=sectionVertices(example,(example.a+example.b)/2).length;
+  const x=[],y=[],z=[],i=[],j=[],k=[];
+  for(const t of ts){for(const p of sectionVertices(example,t)){x.push(t);y.push(p[0]);z.push(p[1])}}
+  for(let r=0;r<ts.length-1;r++)for(let q=0;q<ringSize;q++){
+    const q2=(q+1)%ringSize,a=r*ringSize+q,b=r*ringSize+q2,c=(r+1)*ringSize+q,d=(r+1)*ringSize+q2;
+    i.push(a,b);j.push(b,d);k.push(c,c);
+  }
+  if(ringSize===4){i.push(0,0);j.push(1,2);k.push(2,3)}
+  return {type:'mesh3d',x,y,z,i,j,k,color:COLORS.turquoise,opacity:.34,flatshading:true,lighting:{ambient:.72,diffuse:.7,specular:.18,roughness:.78},lightposition:{x:200,y:-300,z:500},hoverinfo:'skip',showlegend:false};
+}
+function boundaryTraces(example){
+  const ts=linspace(example.a,example.b,91),ringSize=sectionVertices(example,(example.a+example.b)/2).length,traces=[];
+  for(let q=0;q<ringSize;q++){
+    const points=ts.map(t=>sectionVertices(example,t)[q]);
+    traces.push({type:'scatter3d',mode:'lines',x:ts,y:points.map(p=>p[0]),z:points.map(p=>p[1]),line:{color:'rgba(18,50,74,.72)',width:2},hoverinfo:'skip',showlegend:false});
+  }
+  return traces;
+}
+function extraPositions(example,count){
+  const padding=(example.b-example.a)/(count+1);
+  return linspace(example.a+padding,example.b-padding,count);
+}
+function plot2D(example,t){
+  const xs=linspace(example.a,example.b,201),upper=xs.map(example.upper),lower=xs.map(example.lower),polygonX=[...xs,...xs.slice().reverse()],polygonY=[...upper,...lower.slice().reverse()];
+  const traces=[
+    {type:'scatter',x:polygonX,y:polygonY,fill:'toself',fillcolor:'rgba(0,140,149,.23)',line:{color:'rgba(0,0,0,0)'},hoverinfo:'skip',showlegend:false},
+    {type:'scatter',mode:'lines',x:xs,y:upper,line:{color:COLORS.blue,width:3},hoverinfo:'skip',showlegend:false},
+    {type:'scatter',mode:'lines',x:xs,y:lower,line:{color:COLORS.blue,width:3},hoverinfo:'skip',showlegend:false}
+  ];
+  if(showStack.checked){
+    for(const q of extraPositions(example,+countSlider.value))traces.push({type:'scatter',mode:'lines',x:[q,q],y:[example.lower(q),example.upper(q)],line:{color:'rgba(115,87,184,.5)',width:2},hoverinfo:'skip',showlegend:false});
+  }
+  traces.push({type:'scatter',mode:'lines+markers',x:[t,t],y:[example.lower(t),example.upper(t)],line:{color:COLORS.gold,width:7},marker:{color:COLORS.gold,size:7,line:{color:'#6b5100',width:1}},hovertemplate:`${example.segmentLabel}(${example.symbol})=${formatNumber(example.segmentValue(t),2)} ${example.unit}<extra></extra>`,showlegend:false});
+  const padX=(example.b-example.a)*.09,padY=Math.max(...upper)-Math.min(...lower)||1;
+  const labelOnLeft=t>example.a+.72*(example.b-example.a);
+  const layout={margin:{l:58,r:22,t:10,b:55},paper_bgcolor:'#fff',plot_bgcolor:'#fff',hovermode:'closest',showlegend:false,
+    xaxis:{title:{text:example.xTitle,standoff:10},range:[example.a-padX,example.b+padX],showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',zerolinewidth:2,linecolor:'#111',linewidth:2,mirror:false,ticks:'outside',tickcolor:'#111'},
+    yaxis:{title:{text:example.yTitle,standoff:8},range:[Math.min(...lower)-padY*.12,Math.max(...upper)+padY*.12],showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',zerolinewidth:2,linecolor:'#111',linewidth:2,ticks:'outside',tickcolor:'#111'},
+    font:{family:'ui-sans-serif,system-ui',color:COLORS.ink},annotations:[{x:t,y:example.annotationY?example.annotationY(t):(example.lower(t)+example.upper(t))/2,text:`${example.segmentLabel}(${example.symbol})`,showarrow:false,xanchor:labelOnLeft?'right':'left',xshift:labelOnLeft?-12:12,bgcolor:'rgba(255,248,229,.94)',bordercolor:COLORS.gold,borderwidth:1,borderpad:4,font:{color:'#795b00',size:14}}]};
+  Plotly.react(plot2d,traces,layout,{responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']});
+}
+function plot3D(example,t){
+  const traces=[solidMesh(example),...boundaryTraces(example)];
+  if(showStack.checked){
+    for(const q of extraPositions(example,+countSlider.value))traces.push(sectionOutlineTrace(example,q,'rgba(115,87,184,.62)',3));
+  }
+  traces.push(sectionMeshTrace(example,t),sectionOutlineTrace(example,t));
+  const sideMax=Math.max(example.side(example.a),example.side((example.a+example.b)/2),1),long=example.b-example.a;
+  const ratio=clamp(sideMax/long,.75,1.55);
+  const layout={margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'#fff',showlegend:false,uirevision:`camera-${exampleSelect.value}`,
+    scene:{aspectmode:'manual',aspectratio:{x:1,y:ratio,z:ratio},camera:{eye:{x:0,y:0,z:2.5},up:{x:0,y:1,z:0},center:{x:0,y:0,z:0},projection:{type:'orthographic'}},bgcolor:'#fff',
+      xaxis:{title:example.xTitle,showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false},
+      yaxis:{title:'dirección transversal',showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false},
+      zaxis:{title:'altura de la sección',showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false}},
+    font:{family:'ui-sans-serif,system-ui',color:COLORS.ink}};
+  Plotly.react(plot3d,traces,layout,{responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']});
+}
+let frame=null;
+function queueRender(){if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=null;renderPlots()})}
+function renderPlots(){
+  const example=currentExample(),t=+positionSlider.value;
+  try{plot2D(example,t);plot3D(example,t);status.textContent=''}catch(error){console.error(error);status.textContent='No fue posible actualizar la visualización. Recarga la página e intenta nuevamente.'}
+  positionValue.textContent=`${example.symbol} = ${formatNumber(t,example.step<1?2:0)}${example.unit==='ft'?' ft':''}`;
+}
+function typesetResults(){
+  if(!window.MathJax?.typesetPromise)return;
+  MathJax.typesetClear?.([widthFormula,areaFormula]);
+  MathJax.typesetPromise([widthFormula,areaFormula]).catch(error=>console.warn('MathJax:',error));
+}
+function loadExample(){
+  const example=currentExample(),middle=(example.a+example.b)/2;
+  positionSlider.min=example.a;positionSlider.max=example.b;positionSlider.step=example.step;positionSlider.value=middle;
+  exampleTitle.textContent=example.title;exampleDescription.textContent=example.description;exampleData.textContent=example.data;plot2dTitle.textContent=example.plotTitle;
+  widthFormula.innerHTML=example.widthLatex;areaFormula.innerHTML=example.areaLatex;volumeResult.textContent=`V ≈ ${formatNumber(example.volume,example.volume>100?0:4)} ${example.volumeUnit}`;
+  typesetResults();renderPlots();
+}
+exampleSelect.addEventListener('change',loadExample);
+positionSlider.addEventListener('input',queueRender);
+showStack.addEventListener('change',()=>{countControl.hidden=!showStack.checked;stackLegend.hidden=!showStack.checked;queueRender()});
+countSlider.addEventListener('input',()=>{countValue.textContent=countSlider.value;queueRender()});
+window.addEventListener('resize',()=>{Plotly.Plots.resize(plot2d);Plotly.Plots.resize(plot3d)});
+loadExample();
+})();
+</script>
+</body>
+</html>
