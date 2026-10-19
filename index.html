@@ -18,7 +18,7 @@
 <header>
 <p class="institution">Universidad Galileo · Departamento de Matemática Aplicada</p>
 <h1>Sólidos con secciones transversales conocidas</h1>
-<p class="intro">Explora cómo una familia de figuras planas construye un sólido. Selecciona un ejemplo, desplaza la sección resaltada y relaciona su dimensión característica con el área (A(x)).</p>
+<p class="intro">Explora cómo una familia de figuras planas construye un sólido. Selecciona un ejemplo, desplaza la sección resaltada y relaciona su dimensión característica con el área \(A(x)\).</p>
 </header>
 
 <section class="card controls" aria-label="Controles del applet">
@@ -32,7 +32,7 @@
 </select>
 </div>
 <div class="field">
-<div class="range-head"><label for="position-slider">Posición de la sección</label><span class="value-chip" id="position-value">x = 0</span></div>
+<div class="range-head"><label for="position-slider">Posición de la sección</label><span class="value-chip" id="position-value">\(x=0\)</span></div>
 <input id="position-slider" type="range" min="-1" max="1" step="0.01" value="0" aria-describedby="position-help">
 <div id="position-help" class="tip">Mueve el control para observar cómo cambia la sección transversal.</div>
 </div>
@@ -104,22 +104,40 @@ const plot3d=document.getElementById('plot3d');
 const linspace=(a,b,n)=>Array.from({length:n},(_,i)=>a+(b-a)*i/(n-1));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const formatNumber=(value,digits=3)=>Math.abs(value)<1e-12?'0':Number(value.toFixed(digits)).toLocaleString('es-GT',{maximumFractionDigits:digits});
+function renderLatex(element,latex){
+  const ticket=(element._latexTicket||0)+1;element._latexTicket=ticket;
+  const attempt=(remaining=120)=>{
+    if(element._latexTicket!==ticket)return;
+    if(window.MathJax?.tex2svgPromise){
+      Promise.resolve(window.MathJax.startup?.promise).then(()=>MathJax.tex2svgPromise(latex,{display:false})).then(node=>{if(element._latexTicket===ticket)element.replaceChildren(node)}).catch(error=>console.warn('MathJax:',error));
+    }else if(remaining>0)setTimeout(()=>attempt(remaining-1),50);
+  };
+  attempt();
+}
+function typesetContent(elements){
+  const attempt=(remaining=120)=>{
+    if(window.MathJax?.typesetPromise){
+      Promise.resolve(window.MathJax.startup?.promise).then(()=>{MathJax.typesetClear?.(elements);return MathJax.typesetPromise(elements)}).catch(error=>console.warn('MathJax:',error));
+    }else if(remaining>0)setTimeout(()=>attempt(remaining-1),50);
+  };
+  attempt();
+}
 
 const examples={
   'circle-triangle':{
-    title:'Base circular y triángulos equiláteros',description:'La base es el círculo unitario. Cada corte perpendicular al eje x produce un triángulo equilátero cuyo lado es la cuerda vertical del círculo.',data:'Intervalo: −1 ≤ x ≤ 1 · Radio de la base: 1',plotTitle:'Región base circular',a:-1,b:1,step:.01,unit:'u',symbol:'x',section:'equilateral',centered:true,
+    title:'Base circular y triángulos equiláteros',description:'La base es el círculo unitario. Cada corte perpendicular al eje \\(x\\) produce un triángulo equilátero cuyo lado es la cuerda vertical del círculo.',data:'Intervalo: \\(-1\\le x\\le 1\\) · Radio de la base: \\(1\\)',plotTitle:'Región base circular',a:-1,b:1,step:.01,unit:'u',symbol:'x',section:'equilateral',centered:true,
     lower:x=>-Math.sqrt(Math.max(0,1-x*x)),upper:x=>Math.sqrt(Math.max(0,1-x*x)),side:x=>2*Math.sqrt(Math.max(0,1-x*x)),segmentLabel:'2y',segmentValue:x=>2*Math.sqrt(Math.max(0,1-x*x)),
-    widthLatex:'\\(y(x)=\\sqrt{1-x^2}\\)',areaLatex:'\\(A(x)=\\frac{\\sqrt{3}}{4}[2y(x)]^2=\\sqrt{3}(1-x^2)\\)',volume:4*Math.sqrt(3)/3,volumeUnit:'u³',xTitle:'x',yTitle:'y'
+    widthLatex:'\\(y(x)=\\sqrt{1-x^2}\\)',areaLatex:'\\(A(x)=\\frac{\\sqrt{3}}{4}[2y(x)]^2=\\sqrt{3}(1-x^2)\\)',volume:4*Math.sqrt(3)/3,volumeUnit:'\\mathrm{u}^3',xTitle:'x',yTitle:'y'
   },
   pyramid:{
-    title:'Gran Pirámide de Guiza',description:'El vértice se coloca en el origen. Los cortes perpendiculares al eje x son cuadrados cuyo lado es 2y(x), donde y(x) crece linealmente hasta 378 ft.',data:'Vértice: (0,0) · Punto de la recta: (481,378) · Lado de la base: 756 ft',plotTitle:'Recta que determina la mitad del lado',a:0,b:481,step:1,unit:'ft',symbol:'x',section:'square-centered',centered:true,
+    title:'Gran Pirámide de Guiza',description:'El vértice se coloca en el origen. Los cortes perpendiculares al eje \\(x\\) son cuadrados cuyo lado es \\(2y(x)\\), donde \\(y(x)\\) crece linealmente hasta \\(378\\,\\mathrm{ft}\\).',data:'Vértice: \\((0,0)\\) · Punto de la recta: \\((481,378)\\) · Lado de la base: \\(756\\,\\mathrm{ft}\\)',plotTitle:'Recta que determina la mitad del lado',a:0,b:481,step:1,unit:'ft',symbol:'x',section:'square-centered',centered:true,
     lower:x=>-378*x/481,upper:x=>378*x/481,side:x=>756*x/481,segmentLabel:'y',segmentValue:x=>378*x/481,annotationY:x=>189*x/481,
-    widthLatex:'\\(y(x)=\\frac{378}{481}x\\text{ ft}\\)',areaLatex:'\\(A(x)=[2y(x)]^2\\)',volume:756*756*481/3,volumeUnit:'ft³',xTitle:'x (ft)',yTitle:'y(x) (ft)'
+    widthLatex:'\\(y(x)=\\frac{378}{481}x\\,\\mathrm{ft}\\)',areaLatex:'\\(A(x)=[2y(x)]^2\\)',volume:756*756*481/3,volumeUnit:'\\mathrm{ft}^3',xTitle:'x (ft)',yTitle:'y(x) (ft)'
   },
   'triangle-square':{
-    title:'Base triangular y secciones cuadradas',description:'La base está limitada por los ejes coordenados y la recta x+y=1. Cada segmento vertical de la región es el lado de un cuadrado.',data:'Vértices de la base: (0,0), (1,0) y (0,1) · Intervalo: 0 ≤ x ≤ 1',plotTitle:'Región base triangular',a:0,b:1,step:.01,unit:'u',symbol:'x',section:'square-positive',centered:false,
+    title:'Base triangular y secciones cuadradas',description:'La base está limitada por los ejes coordenados y la recta \\(x+y=1\\). Cada segmento vertical de la región es el lado de un cuadrado.',data:'Vértices de la base: \\((0,0)\\), \\((1,0)\\) y \\((0,1)\\) · Intervalo: \\(0\\le x\\le 1\\)',plotTitle:'Región base triangular',a:0,b:1,step:.01,unit:'u',symbol:'x',section:'square-positive',centered:false,
     lower:x=>0,upper:x=>Math.max(0,1-x),side:x=>Math.max(0,1-x),segmentLabel:'y',segmentValue:x=>Math.max(0,1-x),
-    widthLatex:'\\(y(x)=1-x\\)',areaLatex:'\\(A(x)=y(x)^2=(1-x)^2\\)',volume:1/3,volumeUnit:'u³',xTitle:'x',yTitle:'y'
+    widthLatex:'\\(y(x)=1-x\\)',areaLatex:'\\(A(x)=y(x)^2=(1-x)^2\\)',volume:1/3,volumeUnit:'\\mathrm{u}^3',xTitle:'x',yTitle:'y'
   }
 };
 
@@ -182,6 +200,7 @@ function plot2D(example,t){
     font:{family:'ui-sans-serif,system-ui',color:COLORS.ink},annotations:[{x:t,y:example.annotationY?example.annotationY(t):(example.lower(t)+example.upper(t))/2,text:`${example.segmentLabel}(${example.symbol})`,showarrow:false,xanchor:labelOnLeft?'right':'left',xshift:labelOnLeft?-12:12,bgcolor:'rgba(255,248,229,.94)',bordercolor:COLORS.gold,borderwidth:1,borderpad:4,font:{color:'#795b00',size:14}}]};
   Plotly.react(plot2d,traces,layout,{responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']});
 }
+let reset3DCamera=true;
 function plot3D(example,t){
   const traces=[solidMesh(example),...boundaryTraces(example)];
   if(showStack.checked){
@@ -190,31 +209,34 @@ function plot3D(example,t){
   traces.push(sectionMeshTrace(example,t),sectionOutlineTrace(example,t));
   const sideMax=Math.max(example.side(example.a),example.side((example.a+example.b)/2),1),long=example.b-example.a;
   const ratio=clamp(sideMax/long,.75,1.55);
+  const defaultCamera={eye:{x:0,y:0,z:2.5},up:{x:0,y:1,z:0},center:{x:0,y:0,z:0},projection:{type:'orthographic'}};
+  const camera=!reset3DCamera&&plot3d.layout?.scene?.camera?plot3d.layout.scene.camera:defaultCamera;
   const layout={margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'#fff',showlegend:false,uirevision:`camera-${exampleSelect.value}`,
-    scene:{aspectmode:'manual',aspectratio:{x:1,y:ratio,z:ratio},camera:{eye:{x:0,y:0,z:2.5},up:{x:0,y:1,z:0},center:{x:0,y:0,z:0},projection:{type:'orthographic'}},bgcolor:'#fff',
+    scene:{aspectmode:'manual',aspectratio:{x:1,y:ratio,z:ratio},camera,bgcolor:'#fff',
       xaxis:{title:example.xTitle,showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false},
       yaxis:{title:'dirección transversal',showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false},
       zaxis:{title:'altura de la sección',showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false}},
     font:{family:'ui-sans-serif,system-ui',color:COLORS.ink}};
   Plotly.react(plot3d,traces,layout,{responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']});
+  reset3DCamera=false;
 }
 let frame=null;
 function queueRender(){if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=null;renderPlots()})}
 function renderPlots(){
   const example=currentExample(),t=+positionSlider.value;
   try{plot2D(example,t);plot3D(example,t);status.textContent=''}catch(error){console.error(error);status.textContent='No fue posible actualizar la visualización. Recarga la página e intenta nuevamente.'}
-  positionValue.textContent=`${example.symbol} = ${formatNumber(t,example.step<1?2:0)}${example.unit==='ft'?' ft':''}`;
+  renderLatex(positionValue,`${example.symbol}=${formatNumber(t,example.step<1?2:0)}${example.unit==='ft'?'\\,\\mathrm{ft}':''}`);
 }
 function typesetResults(){
-  if(!window.MathJax?.typesetPromise)return;
-  MathJax.typesetClear?.([widthFormula,areaFormula]);
-  MathJax.typesetPromise([widthFormula,areaFormula]).catch(error=>console.warn('MathJax:',error));
+  typesetContent([exampleDescription,exampleData,widthFormula,areaFormula]);
 }
 function loadExample(){
   const example=currentExample(),middle=(example.a+example.b)/2;
+  reset3DCamera=true;
   positionSlider.min=example.a;positionSlider.max=example.b;positionSlider.step=example.step;positionSlider.value=middle;
-  exampleTitle.textContent=example.title;exampleDescription.textContent=example.description;exampleData.textContent=example.data;plot2dTitle.textContent=example.plotTitle;
-  widthFormula.innerHTML=example.widthLatex;areaFormula.innerHTML=example.areaLatex;volumeResult.textContent=`V ≈ ${formatNumber(example.volume,example.volume>100?0:4)} ${example.volumeUnit}`;
+  exampleTitle.textContent=example.title;exampleDescription.innerHTML=example.description;exampleData.innerHTML=example.data;plot2dTitle.textContent=example.plotTitle;
+  widthFormula.innerHTML=example.widthLatex;areaFormula.innerHTML=example.areaLatex;
+  renderLatex(volumeResult,`V\\approx ${formatNumber(example.volume,example.volume>100?0:4)}\\,${example.volumeUnit}`);
   typesetResults();renderPlots();
 }
 exampleSelect.addEventListener('change',loadExample);
