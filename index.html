@@ -203,7 +203,13 @@ function plot2D(example,t){
     font:{family:'ui-sans-serif,system-ui',color:COLORS.ink},annotations:[{x:t,y:example.annotationY?example.annotationY(t):(example.lower(t)+example.upper(t))/2,text:`${example.segmentLabel}(${example.symbol})`,showarrow:false,xanchor:labelOnLeft?'right':'left',xshift:labelOnLeft?-12:12,bgcolor:'rgba(255,248,229,.94)',bordercolor:COLORS.gold,borderwidth:1,borderpad:4,font:{color:'#795b00',size:14}}]};
   Plotly.react(plot2d,traces,layout,{responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']});
 }
-let reset3DCamera=true;
+const camerasByExample={};
+let renderedExampleKey=null;
+let cameraListenerAttached=false;
+function copyCamera(camera){return camera?JSON.parse(JSON.stringify(camera)):null}
+function liveCamera(){
+  try{return plot3d._fullLayout?.scene?._scene?.getCamera?.()||null}catch(_error){return null}
+}
 function plot3D(example,t){
   const traces=[solidMesh(example),...boundaryTraces(example)];
   if(showStack.checked){
@@ -213,15 +219,25 @@ function plot3D(example,t){
   const sideMax=Math.max(example.side(example.a),example.side((example.a+example.b)/2),1),long=example.b-example.a;
   const ratio=clamp(sideMax/long,.75,1.55);
   const defaultCamera={eye:{x:0,y:0,z:2.5},up:{x:0,y:1,z:0},center:{x:0,y:0,z:0},projection:{type:'orthographic'}};
-  const camera=!reset3DCamera&&plot3d.layout?.scene?.camera?plot3d.layout.scene.camera:defaultCamera;
+  const exampleKey=exampleSelect.value;
+  if(renderedExampleKey===exampleKey){const current=liveCamera();if(current)camerasByExample[exampleKey]=copyCamera(current)}
+  const camera=copyCamera(camerasByExample[exampleKey]||defaultCamera);
   const layout={margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'#fff',showlegend:false,uirevision:`camera-${exampleSelect.value}`,
     scene:{aspectmode:'manual',aspectratio:{x:1,y:ratio,z:ratio},camera,bgcolor:'#fff',
       xaxis:{title:example.xTitle,showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false},
       yaxis:{title:'dirección transversal',showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false},
       zaxis:{title:'altura de la sección',showgrid:true,gridcolor:COLORS.grid,zeroline:true,zerolinecolor:'#111',linecolor:'#111',showbackground:false}},
     font:{family:'ui-sans-serif,system-ui',color:COLORS.ink}};
-  Plotly.react(plot3d,traces,layout,{responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']});
-  reset3DCamera=false;
+  Plotly.react(plot3d,traces,layout,{responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d']}).then(()=>{
+    renderedExampleKey=exampleKey;
+    if(!cameraListenerAttached){
+      plot3d.on('plotly_relayout',event=>{
+        const changedCamera=event['scene.camera'];
+        if(changedCamera)camerasByExample[exampleSelect.value]=copyCamera(changedCamera);
+      });
+      cameraListenerAttached=true;
+    }
+  });
 }
 let frame=null;
 function queueRender(){if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=null;renderPlots()})}
@@ -235,7 +251,7 @@ function typesetResults(){
 }
 function loadExample(){
   const example=currentExample(),middle=(example.a+example.b)/2;
-  reset3DCamera=true;
+  camerasByExample[exampleSelect.value]={eye:{x:0,y:0,z:2.5},up:{x:0,y:1,z:0},center:{x:0,y:0,z:0},projection:{type:'orthographic'}};
   positionSlider.min=example.a;positionSlider.max=example.b;positionSlider.step=example.step;positionSlider.value=middle;
   exampleTitle.textContent=example.title;exampleDescription.innerHTML=example.description;exampleData.innerHTML=example.data;plot2dTitle.textContent=example.plotTitle;
   widthFormula.innerHTML=example.widthLatex;areaFormula.innerHTML=example.areaLatex;
